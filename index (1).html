@@ -1,0 +1,2265 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AURVM — Ultra-luxury Swiss watchmaking. Timepieces engineered beyond perfection." />
+  <meta name="keywords" content="luxury watch, swiss watch, tourbillon, haute horlogerie" />
+  <title>AURVM — Beyond Time</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Barlow+Condensed:wght@200;300;400;500;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ===========================
+       CSS CUSTOM PROPERTIES
+    =========================== */
+    :root {
+      --gold: #c9a96e;
+      --gold-light: #e8cc98;
+      --gold-dark: #8c6e3f;
+      --cream: #f5f0e8;
+      --white: #ffffff;
+      --black: #000000;
+      --dark-1: #0a0a0a;
+      --dark-2: #111111;
+      --dark-3: #1a1a1a;
+      --dark-4: #242424;
+      --gray-1: #888888;
+      --gray-2: #555555;
+      --text-main: #e8e4de;
+      --text-muted: #888888;
+      --transition: 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      --transition-fast: 0.2s ease;
+      --font-display: 'Cormorant Garamond', serif;
+      --font-ui: 'Barlow Condensed', sans-serif;
+      --font-body: 'Barlow', sans-serif;
+    }
+
+    [data-theme="light"] {
+      --dark-1: #f5f0e8;
+      --dark-2: #ede8df;
+      --dark-3: #e0dbd0;
+      --dark-4: #d0cbc0;
+      --text-main: #1a1a1a;
+      --text-muted: #666666;
+      --gray-1: #444444;
+      --gray-2: #888888;
+      --white: #000000;
+      --black: #ffffff;
+    }
+
+    /* ===========================
+       RESET & BASE
+    =========================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+    body {
+      font-family: var(--font-body);
+      background: var(--dark-1);
+      color: var(--text-main);
+      overflow-x: hidden;
+      cursor: none;
+    }
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    button { cursor: none; border: none; background: none; font-family: inherit; }
+
+    /* ===========================
+       CUSTOM CURSOR
+    =========================== */
+    .cursor-dot {
+      width: 8px; height: 8px;
+      background: var(--gold);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 10000;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s, background 0.2s;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1px solid rgba(201,169,110,0.5);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease, width 0.3s, height 0.3s, opacity 0.3s;
+    }
+    body:hover .cursor-ring { opacity: 1; }
+    .cursor-dot.hover { width: 14px; height: 14px; background: var(--gold-light); }
+    .cursor-ring.hover { width: 56px; height: 56px; border-color: var(--gold); }
+
+    /* ===========================
+       LOADER
+    =========================== */
+    #loader {
+      position: fixed; inset: 0;
+      background: var(--dark-1);
+      z-index: 9998;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    #loader.loaded { opacity: 0; visibility: hidden; }
+    .loader-logo {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      font-weight: 300;
+      letter-spacing: 0.4em;
+      color: var(--gold);
+      opacity: 0;
+      animation: loaderFadeIn 0.8s 0.3s forwards;
+    }
+    .loader-line {
+      width: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin-top: 1rem;
+      animation: loaderLine 1.5s 0.5s forwards;
+    }
+    .loader-percent {
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      color: var(--text-muted);
+      margin-top: 1.5rem;
+      opacity: 0;
+      animation: loaderFadeIn 0.5s 1s forwards;
+    }
+    @keyframes loaderFadeIn { to { opacity: 1; } }
+    @keyframes loaderLine { to { width: 200px; } }
+
+    /* ===========================
+       SCROLLBAR
+    =========================== */
+    ::-webkit-scrollbar { width: 2px; }
+    ::-webkit-scrollbar-track { background: var(--dark-1); }
+    ::-webkit-scrollbar-thumb { background: var(--gold-dark); }
+
+    /* ===========================
+       HEADER / NAV
+    =========================== */
+    #header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 0 3rem;
+      height: 80px;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: background var(--transition), backdrop-filter var(--transition), box-shadow var(--transition);
+    }
+    #header.scrolled {
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 1px 0 rgba(201,169,110,0.15);
+    }
+    [data-theme="light"] #header.scrolled {
+      background: rgba(245,240,232,0.92);
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 300;
+      letter-spacing: 0.35em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+    .nav-logo span { color: var(--text-main); }
+
+    .nav-links {
+      display: flex; gap: 2.5rem; align-items: center;
+    }
+    .nav-links a {
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      position: relative;
+      transition: color var(--transition-fast);
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute; bottom: -4px; left: 0;
+      width: 0; height: 1px;
+      background: var(--gold);
+      transition: width var(--transition);
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-actions {
+      display: flex; align-items: center; gap: 1.5rem;
+    }
+    .nav-icon {
+      width: 20px; height: 20px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted);
+      transition: color var(--transition-fast);
+    }
+    .nav-icon:hover { color: var(--gold); }
+    .nav-icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+
+    .theme-btn {
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      padding: 0.4rem 0.8rem;
+      border: 1px solid var(--gray-2);
+      transition: all var(--transition-fast);
+    }
+    .theme-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column; gap: 5px;
+      width: 28px;
+    }
+    .hamburger span {
+      display: block; height: 1px;
+      background: var(--text-main);
+      transition: all var(--transition);
+    }
+    .hamburger span:nth-child(2) { width: 65%; margin-left: auto; }
+    .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; transform: translateX(10px); }
+    .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+    /* Mobile Menu */
+    .mobile-menu {
+      position: fixed; inset: 0;
+      background: var(--dark-1);
+      z-index: 999;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 2.5rem;
+      transform: translateX(100%);
+      transition: transform 0.6s cubic-bezier(0.76, 0, 0.24, 1);
+    }
+    .mobile-menu.open { transform: translateX(0); }
+    .mobile-menu a {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      transition: color var(--transition-fast);
+    }
+    .mobile-menu a:hover { color: var(--gold); }
+    .mobile-menu-line {
+      width: 60px; height: 1px;
+      background: var(--gray-2);
+    }
+
+    /* ===========================
+       HERO SECTION
+    =========================== */
+    #hero {
+      height: 100vh; min-height: 600px;
+      position: relative;
+      display: flex; align-items: flex-end;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 70% 40%, #1a1208 0%, #0a0a0a 60%);
+      z-index: 0;
+    }
+    /* SVG Watch face as hero background element */
+    .hero-watch-visual {
+      position: absolute;
+      right: 5%; top: 50%;
+      transform: translateY(-50%);
+      width: clamp(300px, 45vw, 700px);
+      height: clamp(300px, 45vw, 700px);
+      opacity: 0.9;
+      animation: heroWatchFloat 8s ease-in-out infinite;
+    }
+    @keyframes heroWatchFloat {
+      0%, 100% { transform: translateY(-50%) rotate(0deg); }
+      50% { transform: translateY(-53%) rotate(1.5deg); }
+    }
+    .hero-glow {
+      position: absolute;
+      right: 0%; top: 20%;
+      width: 50vw; height: 70vh;
+      background: radial-gradient(ellipse, rgba(201,169,110,0.08) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-content {
+      position: relative; z-index: 2;
+      padding: 0 4rem 6rem;
+      max-width: 600px;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-ui);
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.4em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: slideUp 0.8s 1.5s forwards;
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(3.5rem, 8vw, 6.5rem);
+      font-weight: 300;
+      line-height: 1.08;
+      letter-spacing: -0.015em;
+      color: var(--cream);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: slideUp 0.9s 1.7s forwards;
+    }
+    .hero-title em { font-style: italic; color: var(--gold); font-weight: 300; }
+    .hero-subtitle {
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+      max-width: 400px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: slideUp 0.8s 1.9s forwards;
+    }
+    .hero-ctas {
+      display: flex; gap: 1.5rem; align-items: center;
+      flex-wrap: wrap;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: slideUp 0.8s 2.1s forwards;
+    }
+    .btn-primary {
+      font-family: var(--font-ui);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--dark-1);
+      background: var(--gold);
+      padding: 1rem 2.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: color var(--transition);
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--cream);
+      transform: translateX(-100%);
+      transition: transform var(--transition);
+    }
+    .btn-primary:hover::before { transform: translateX(0); }
+    .btn-primary span { position: relative; z-index: 1; }
+    .btn-outline {
+      font-family: var(--font-ui);
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--gray-2);
+      padding-bottom: 2px;
+      transition: color var(--transition-fast), border-color var(--transition-fast);
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .btn-outline:hover { color: var(--gold); border-color: var(--gold); }
+    .btn-outline svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.5; transition: transform var(--transition); }
+    .btn-outline:hover svg { transform: translateX(5px); }
+
+    /* Hero scroll indicator */
+    .hero-scroll {
+      position: absolute; bottom: 2.5rem; left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex; flex-direction: column; align-items: center; gap: 0.75rem;
+      opacity: 0;
+      animation: fadeIn 1s 2.5s forwards;
+    }
+    .hero-scroll span {
+      font-family: var(--font-ui);
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .scroll-line {
+      width: 1px; height: 50px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollLinePulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollLinePulse {
+      0%, 100% { opacity: 0.4; height: 40px; }
+      50% { opacity: 1; height: 55px; }
+    }
+
+    /* Hero side text */
+    .hero-side-text {
+      position: absolute; right: 2rem; bottom: 5rem;
+      z-index: 2;
+      writing-mode: vertical-rl;
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      color: var(--gray-2);
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeIn 1s 2.3s forwards;
+    }
+
+    @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { to { opacity: 1; } }
+
+    /* ===========================
+       SECTION UTILITIES
+    =========================== */
+    .section-pad { padding: 8rem 4rem; }
+    .section-pad-sm { padding: 5rem 4rem; }
+
+    .section-label {
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: flex; align-items: center; gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .section-label::before {
+      content: '';
+      width: 50px; height: 1px;
+      background: var(--gold);
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 5.5vw, 4.8rem);
+      font-weight: 300;
+      line-height: 1.1;
+      letter-spacing: -0.015em;
+      color: var(--text-main);
+    }
+    .section-title em { font-style: italic; color: var(--gold); font-weight: 300; }
+
+    /* Reveal animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-40px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal-left.visible { opacity: 1; transform: translateX(0); }
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(40px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+    /* ===========================
+       TICKER / MARQUEE
+    =========================== */
+    .ticker-wrap {
+      background: var(--dark-2);
+      border-top: 1px solid rgba(201,169,110,0.1);
+      border-bottom: 1px solid rgba(201,169,110,0.1);
+      padding: 1rem 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .ticker-track {
+      display: inline-flex; gap: 4rem;
+      animation: ticker 25s linear infinite;
+    }
+    .ticker-item {
+      font-family: var(--font-ui);
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .ticker-item span { color: var(--gold); }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ===========================
+       FEATURED COLLECTION
+    =========================== */
+    #collection {
+      background: var(--dark-1);
+    }
+    .collection-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 4rem;
+      flex-wrap: wrap; gap: 2rem;
+    }
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5px;
+    }
+    .watch-card {
+      position: relative;
+      background: var(--dark-2);
+      overflow: hidden;
+      aspect-ratio: 3/4;
+      cursor: none;
+    }
+    .watch-card-bg {
+      position: absolute; inset: 0;
+      transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .watch-card:hover .watch-card-bg { transform: scale(1.06); }
+    .watch-card-inner {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 2rem;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%);
+    }
+    .watch-card-num {
+      font-family: var(--font-ui);
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      margin-bottom: 0.75rem;
+    }
+    .watch-card-name {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      font-weight: 300;
+      color: var(--cream);
+      margin-bottom: 0.5rem;
+      line-height: 1.2;
+    }
+    .watch-card-ref {
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .watch-card-hover {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.75);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+    .watch-card:hover .watch-card-hover { opacity: 1; }
+    .watch-card-cta {
+      font-family: var(--font-ui);
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid var(--gold);
+      padding: 0.75rem 1.75rem;
+      transform: translateY(10px);
+      transition: transform var(--transition), background var(--transition-fast), color var(--transition-fast);
+    }
+    .watch-card:hover .watch-card-cta {
+      transform: translateY(0);
+    }
+    .watch-card-cta:hover { background: var(--gold); color: var(--dark-1); }
+
+    /* SVG Watch faces for cards */
+    .watch-svg-container {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20%;
+    }
+    .watch-svg-container svg {
+      width: 100%; height: 100%;
+      filter: drop-shadow(0 0 30px rgba(201,169,110,0.2));
+    }
+
+    /* ===========================
+       BRAND STORY
+    =========================== */
+    #brand-story {
+      background: var(--dark-2);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .story-image-side {
+      position: relative;
+      min-height: 600px;
+      background: var(--dark-3);
+      overflow: hidden;
+    }
+    .story-image-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, #1a1208 0%, #0a0a0a 70%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .story-parallax-watch {
+      width: 70%;
+      transition: transform 0.1s ease;
+    }
+    .story-overlay-text {
+      position: absolute; bottom: 3rem; left: 3rem;
+      font-family: var(--font-display);
+      font-size: 5rem;
+      font-weight: 300;
+      color: rgba(201,169,110,0.08);
+      line-height: 1;
+      pointer-events: none;
+      letter-spacing: -0.02em;
+    }
+    .story-content {
+      padding: 6rem 4rem;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .story-body {
+      font-size: 1rem;
+      font-weight: 300;
+      line-height: 1.9;
+      color: var(--text-muted);
+      margin: 2rem 0 3.5rem;
+      max-width: 480px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      padding-top: 2.5rem;
+      border-top: 1px solid rgba(201,169,110,0.1);
+    }
+    .stat-item {}
+    .stat-number {
+      font-family: var(--font-display);
+      font-size: 3rem;
+      font-weight: 300;
+      color: var(--gold);
+      line-height: 1;
+      display: block;
+    }
+    .stat-label {
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 0.4rem;
+      display: block;
+    }
+
+    /* ===========================
+       PARTNERS / AMBASSADORS
+    =========================== */
+    #partners {
+      background: var(--dark-1);
+    }
+    .partners-header {
+      text-align: center;
+      margin-bottom: 5rem;
+    }
+    .partners-section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 300;
+      color: var(--text-main);
+      margin-top: 1rem;
+    }
+    .ambassadors-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 5rem;
+    }
+    .ambassador-card {
+      position: relative;
+      background: var(--dark-2);
+      overflow: hidden;
+      aspect-ratio: 3/4;
+      cursor: none;
+      border: 1px solid transparent;
+      transition: border-color var(--transition);
+    }
+    .ambassador-card:hover { border-color: rgba(201,169,110,0.3); }
+    .ambassador-bg {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.6s ease;
+    }
+    .ambassador-card:hover .ambassador-bg { transform: scale(1.05); }
+    .ambassador-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.1) 60%);
+    }
+    .ambassador-info {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 1.5rem;
+    }
+    .ambassador-sport {
+      font-family: var(--font-ui);
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.4rem;
+    }
+    .ambassador-name {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 300;
+      color: var(--cream);
+    }
+    .ambassador-desc {
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+      letter-spacing: 0.1em;
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.4s ease;
+      opacity: 0;
+    }
+    .ambassador-card:hover .ambassador-desc { max-height: 50px; opacity: 1; }
+
+    .brand-partners-row {
+      display: flex;
+      align-items: center; justify-content: center;
+      gap: 4rem; flex-wrap: wrap;
+      padding-top: 3rem;
+      border-top: 1px solid rgba(201,169,110,0.1);
+    }
+    .partner-logo {
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gray-2);
+      transition: color var(--transition-fast);
+    }
+    .partner-logo:hover { color: var(--gold); }
+
+    /* ===========================
+       WATCH SHOWCASE SLIDER
+    =========================== */
+    #showcase {
+      background: var(--dark-2);
+      overflow: hidden;
+    }
+    .showcase-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      min-height: 600px;
+    }
+    .showcase-slider {
+      position: relative;
+      overflow: hidden;
+    }
+    .slider-track {
+      display: flex;
+      transition: transform 0.7s cubic-bezier(0.76, 0, 0.24, 1);
+    }
+    .slide {
+      min-width: 100%;
+      background: var(--dark-3);
+      display: flex; align-items: center; justify-content: center;
+      padding: 4rem;
+      aspect-ratio: 1;
+    }
+    .slide svg {
+      width: 70%; height: 70%;
+      filter: drop-shadow(0 0 40px rgba(201,169,110,0.15));
+    }
+    .showcase-info {
+      padding: 5rem 4rem;
+      display: flex; flex-direction: column; justify-content: center;
+      border-left: 1px solid rgba(201,169,110,0.1);
+    }
+    .showcase-ref {
+      font-family: var(--font-ui);
+      font-size: 0.6rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+    .showcase-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 300;
+      color: var(--text-main);
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+    .showcase-desc {
+      font-size: 0.9rem;
+      font-weight: 300;
+      line-height: 1.85;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+    }
+    .showcase-specs {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1rem 2rem;
+      margin-bottom: 3rem;
+      padding: 1.5rem;
+      border: 1px solid rgba(201,169,110,0.1);
+    }
+    .spec-item {}
+    .spec-label {
+      font-family: var(--font-ui);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gray-2);
+      display: block; margin-bottom: 0.25rem;
+    }
+    .spec-value {
+      font-family: var(--font-ui);
+      font-size: 0.85rem;
+      color: var(--text-main);
+      font-weight: 500;
+    }
+    .slider-controls {
+      display: flex; gap: 1rem;
+    }
+    .slider-btn {
+      width: 50px; height: 50px;
+      border: 1px solid rgba(201,169,110,0.3);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted);
+      transition: all var(--transition-fast);
+      cursor: none;
+    }
+    .slider-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(201,169,110,0.05); }
+    .slider-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+    .slider-dots {
+      display: flex; gap: 0.5rem; align-items: center; margin-left: 1.5rem;
+    }
+    .slider-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--gray-2);
+      cursor: none;
+      transition: background var(--transition-fast), transform var(--transition-fast);
+    }
+    .slider-dot.active { background: var(--gold); transform: scale(1.3); }
+
+    /* ===========================
+       NEWS SECTION
+    =========================== */
+    #news { background: var(--dark-1); }
+    .news-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 5rem; flex-wrap: wrap; gap: 2rem; width: 100%;
+    }
+    .news-header > div:first-child {
+      flex: 1;
+    }
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+    .news-card {
+      background: transparent;
+      overflow: hidden;
+      cursor: none;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .news-card-image {
+      height: 250px;
+      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--dark-3);
+      margin-bottom: 1.5rem;
+    }
+    .news-card.featured .news-card-image { height: 250px; }
+    .news-card-image svg { width: 80%; height: 80%; opacity: 0.6; }
+    .news-card-image-inner {
+      width: 100%; height: 100%;
+      transition: transform 0.6s ease;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .news-card:hover .news-card-image-inner { transform: scale(1.05); }
+    .news-card-body { padding: 0; }
+    .news-cat {
+      font-family: var(--font-ui);
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .news-cat::before { content: ''; width: 20px; height: 1px; background: var(--gold); }
+    .news-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.2rem, 2.2vw, 1.8rem);
+      font-weight: 300;
+      color: var(--text-main);
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      transition: color var(--transition-fast);
+    }
+    .news-card:hover .news-title { color: var(--gold); }
+    .news-date {
+      font-family: var(--font-ui);
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: var(--gray-1);
+      margin-top: auto;
+    }
+    .news-excerpt {
+      font-size: 0.85rem;
+      line-height: 1.7;
+      color: var(--text-muted);
+      margin: 0.75rem 0;
+      display: none;
+    }
+
+    /* ===========================
+       FOOTER
+    =========================== */
+    #footer {
+      background: var(--dark-2);
+      border-top: 1px solid rgba(201,169,110,0.1);
+    }
+    .footer-top {
+      padding: 5rem 4rem;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 4rem;
+    }
+    .footer-brand {}
+    .footer-logo {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+    .footer-tagline {
+      font-size: 0.9rem;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--text-muted);
+      max-width: 280px;
+      margin-bottom: 2rem;
+    }
+    .social-links {
+      display: flex; gap: 1rem;
+    }
+    .social-link {
+      width: 36px; height: 36px;
+      border: 1px solid var(--gray-2);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted);
+      transition: all var(--transition-fast);
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+    }
+    .social-link:hover { border-color: var(--gold); color: var(--gold); background: rgba(201,169,110,0.05); }
+    .social-link svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+    .footer-col-title {
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-main);
+      margin-bottom: 1.5rem;
+    }
+    .footer-links { display: flex; flex-direction: column; gap: 0.75rem; }
+    .footer-links a {
+      font-size: 0.85rem;
+      font-weight: 300;
+      color: var(--text-muted);
+      transition: color var(--transition-fast);
+    }
+    .footer-links a:hover { color: var(--gold); }
+    .newsletter-form {
+      display: flex; margin-top: 0.5rem;
+      border: 1px solid rgba(201,169,110,0.2);
+    }
+    .newsletter-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      padding: 0.75rem 1rem;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      color: var(--text-main);
+      font-weight: 300;
+    }
+    .newsletter-input::placeholder { color: var(--gray-2); }
+    .newsletter-btn {
+      background: var(--gold);
+      padding: 0.75rem 1.25rem;
+      color: var(--dark-1);
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: none;
+      transition: background var(--transition-fast);
+    }
+    .newsletter-btn:hover { background: var(--gold-light); }
+    .footer-bottom {
+      padding: 1.5rem 4rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-copy {
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--gray-2);
+    }
+    .footer-legal {
+      display: flex; gap: 2rem;
+    }
+    .footer-legal a {
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--gray-2);
+      transition: color var(--transition-fast);
+    }
+    .footer-legal a:hover { color: var(--text-muted); }
+
+    /* ===========================
+       BACK TO TOP
+    =========================== */
+    .back-top {
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 500;
+      width: 44px; height: 44px;
+      border: 1px solid rgba(201,169,110,0.3);
+      background: rgba(10,10,10,0.8);
+      backdrop-filter: blur(10px);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold);
+      cursor: none;
+      opacity: 0; pointer-events: none;
+      transition: all var(--transition-fast);
+    }
+    .back-top.visible { opacity: 1; pointer-events: all; }
+    .back-top:hover { border-color: var(--gold); background: rgba(201,169,110,0.1); }
+    .back-top svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+
+    /* ===========================
+       RESPONSIVE
+    =========================== */
+    @media (max-width: 1200px) {
+      .collection-grid { grid-template-columns: repeat(3, 1fr); }
+      .news-grid { grid-template-columns: 1fr 1fr; }
+      .news-card.featured { grid-column: 1 / -1; }
+      .news-card.featured .news-card-image { height: 250px; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 3rem; }
+      .ambassadors-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 1024px) {
+      .section-pad { padding: 6rem 2.5rem; }
+      .section-pad-sm { padding: 4rem 2.5rem; }
+      #header { padding: 0 2rem; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      #brand-story { grid-template-columns: 1fr; }
+      .story-image-side { min-height: 450px; }
+      .showcase-inner { grid-template-columns: 1fr; }
+      .showcase-info { border-left: none; border-top: 1px solid rgba(201,169,110,0.1); }
+    }
+
+    @media (max-width: 768px) {
+      .section-pad { padding: 5rem 1.5rem; }
+      #header { padding: 0 1.5rem; }
+      .hero-content { padding: 0 1.5rem 5rem; }
+      .collection-grid { grid-template-columns: repeat(2, 1fr); gap: 1px; }
+      .news-grid { grid-template-columns: 1fr; }
+      .news-card.featured { grid-column: auto; }
+      .ambassadors-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-top { grid-template-columns: 1fr; gap: 2.5rem; padding: 3rem 1.5rem; }
+      .footer-bottom { padding: 1.5rem; }
+      .stats-grid { grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+      .brand-partners-row { gap: 2rem; }
+      .story-content { padding: 4rem 1.5rem; }
+      .showcase-info { padding: 3rem 1.5rem; }
+      .showcase-specs { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      .collection-grid { grid-template-columns: 1fr; }
+      .ambassadors-grid { grid-template-columns: 1fr 1fr; }
+      .hero-title { font-size: 3rem; }
+      .hero-ctas { flex-direction: column; align-items: flex-start; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .stat-number { font-size: 2.5rem; }
+      .slider-controls { flex-wrap: wrap; }
+      .theme-btn { display: none; }
+      .hero-side-text { display: none; }
+    }
+
+    @media (hover: none) {
+      .cursor-dot, .cursor-ring { display: none; }
+      body, button, a { cursor: auto; }
+    }
+
+    /* Gold line separator */
+    .gold-line {
+      width: 60px; height: 1px;
+      background: var(--gold);
+      margin: 2rem 0;
+    }
+    .gold-line.center { margin: 2rem auto; }
+  </style>
+</head>
+<body>
+
+<!-- Custom Cursor -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Loader -->
+<div id="loader">
+  <div class="loader-logo">AURVM</div>
+  <div class="loader-line"></div>
+  <div class="loader-percent" id="loaderPercent">Loading — 0%</div>
+</div>
+
+<!-- Back to Top -->
+<button class="back-top" id="backTop" aria-label="Back to top">
+  <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg>
+</button>
+
+<!-- ======================== HEADER ======================== -->
+<header id="header" role="banner">
+  <a href="#" class="nav-logo" aria-label="AURVM Home">AURVM<span>.</span></a>
+  <nav class="nav-links" aria-label="Main navigation">
+    <a href="#collection">Collections</a>
+    <a href="#brand-story">Maison</a>
+    <a href="#partners">Ambassadors</a>
+    <a href="#showcase">Watches</a>
+    <a href="#news">News</a>
+    <a href="#footer">Contact</a>
+  </nav>
+  <div class="nav-actions">
+    <button class="theme-btn" id="themeToggle" aria-label="Toggle theme">Light</button>
+    <a href="#" class="nav-icon" aria-label="Search">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    </a>
+    <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Mobile Menu -->
+<nav class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation">
+  <a href="#collection" class="mobile-link">Collections</a>
+  <div class="mobile-menu-line"></div>
+  <a href="#brand-story" class="mobile-link">Maison</a>
+  <a href="#partners" class="mobile-link">Ambassadors</a>
+  <a href="#showcase" class="mobile-link">Watches</a>
+  <a href="#news" class="mobile-link">News</a>
+  <a href="#footer" class="mobile-link">Contact</a>
+</nav>
+
+<!-- ======================== HERO ======================== -->
+<section id="hero" aria-label="Hero">
+  <div class="hero-bg"></div>
+  <div class="hero-glow"></div>
+
+  <!-- SVG Watch Illustration -->
+  <div class="hero-watch-visual" id="heroWatch">
+    <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+      <!-- Strap top -->
+      <rect x="165" y="10" width="70" height="80" rx="8" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="1"/>
+      <line x1="180" y1="25" x2="220" y2="25" stroke="#333" stroke-width="1"/>
+      <line x1="180" y1="35" x2="220" y2="35" stroke="#333" stroke-width="1"/>
+      <line x1="180" y1="45" x2="220" y2="45" stroke="#333" stroke-width="1"/>
+      <!-- Strap bottom -->
+      <rect x="165" y="310" width="70" height="80" rx="8" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="1"/>
+      <line x1="180" y1="365" x2="220" y2="365" stroke="#333" stroke-width="1"/>
+      <line x1="180" y1="375" x2="220" y2="375" stroke="#333" stroke-width="1"/>
+      <!-- Watch case outer -->
+      <ellipse cx="200" cy="200" rx="145" ry="145" fill="none" stroke="#2a2a2a" stroke-width="12"/>
+      <!-- Watch case -->
+      <ellipse cx="200" cy="200" rx="138" ry="138" fill="url(#caseGrad)" stroke="#c9a96e" stroke-width="1.5"/>
+      <!-- Case inner bezel -->
+      <ellipse cx="200" cy="200" rx="125" ry="125" fill="none" stroke="rgba(201,169,110,0.3)" stroke-width="0.5"/>
+      <!-- Dial background -->
+      <ellipse cx="200" cy="200" rx="118" ry="118" fill="url(#dialGrad)"/>
+      <!-- Skeleton cutouts -->
+      <ellipse cx="160" cy="175" rx="28" ry="28" fill="url(#skelGrad)" stroke="rgba(201,169,110,0.2)" stroke-width="0.5"/>
+      <ellipse cx="240" cy="175" rx="28" ry="28" fill="url(#skelGrad)" stroke="rgba(201,169,110,0.2)" stroke-width="0.5"/>
+      <ellipse cx="200" cy="230" rx="22" ry="22" fill="url(#skelGrad)" stroke="rgba(201,169,110,0.2)" stroke-width="0.5"/>
+      <!-- Hour markers -->
+      <g stroke="#c9a96e" stroke-width="1.5">
+        <line x1="200" y1="88" x2="200" y2="102"/>
+        <line x1="200" y1="298" x2="200" y2="312"/>
+        <line x1="88" y1="200" x2="102" y2="200"/>
+        <line x1="298" y1="200" x2="312" y2="200"/>
+      </g>
+      <g stroke="rgba(201,169,110,0.4)" stroke-width="0.8">
+        <line x1="255" y1="95" x2="248" y2="107"/>
+        <line x1="305" y1="145" x2="293" y2="152"/>
+        <line x1="305" y1="255" x2="293" y2="248"/>
+        <line x1="255" y1="305" x2="248" y2="293"/>
+        <line x1="145" y1="305" x2="152" y2="293"/>
+        <line x1="95" y1="255" x2="107" y2="248"/>
+        <line x1="95" y1="145" x2="107" y2="152"/>
+        <line x1="145" y1="95" x2="152" y2="107"/>
+      </g>
+      <!-- Subdial circles -->
+      <circle cx="160" cy="175" r="22" fill="none" stroke="rgba(201,169,110,0.15)" stroke-width="0.5"/>
+      <circle cx="240" cy="175" r="22" fill="none" stroke="rgba(201,169,110,0.15)" stroke-width="0.5"/>
+      <circle cx="200" cy="230" r="16" fill="none" stroke="rgba(201,169,110,0.15)" stroke-width="0.5"/>
+      <!-- Subdial markers -->
+      <g stroke="rgba(201,169,110,0.5)" stroke-width="0.8">
+        <line x1="160" y1="153" x2="160" y2="158"/>
+        <line x1="160" y1="192" x2="160" y2="197"/>
+        <line x1="138" y1="175" x2="143" y2="175"/>
+        <line x1="177" y1="175" x2="182" y2="175"/>
+        <line x1="240" y1="153" x2="240" y2="158"/>
+        <line x1="240" y1="192" x2="240" y2="197"/>
+        <line x1="218" y1="175" x2="223" y2="175"/>
+        <line x1="257" y1="175" x2="262" y2="175"/>
+      </g>
+      <!-- Bridge structure -->
+      <path d="M148 155 L168 145 L230 148 L252 155" fill="none" stroke="rgba(201,169,110,0.25)" stroke-width="0.8"/>
+      <path d="M148 245 L168 255 L230 252 L252 245" fill="none" stroke="rgba(201,169,110,0.25)" stroke-width="0.8"/>
+      <!-- Hour hand -->
+      <line x1="200" y1="200" x2="200" y2="135" stroke="#e8cc98" stroke-width="3" stroke-linecap="round"/>
+      <!-- Minute hand -->
+      <line x1="200" y1="200" x2="253" y2="157" stroke="#c9a96e" stroke-width="2" stroke-linecap="round"/>
+      <!-- Second hand -->
+      <line x1="200" y1="200" x2="165" y2="260" stroke="#e05a2b" stroke-width="1" stroke-linecap="round"/>
+      <line x1="200" y1="200" x2="210" y2="178" stroke="#e05a2b" stroke-width="1" stroke-linecap="round"/>
+      <!-- Center jewel -->
+      <circle cx="200" cy="200" r="5" fill="#c9a96e"/>
+      <circle cx="200" cy="200" r="2.5" fill="#e8cc98"/>
+      <!-- Crown -->
+      <rect x="332" y="192" width="16" height="16" rx="4" fill="#2a2a2a" stroke="#c9a96e" stroke-width="0.8"/>
+      <!-- Brand text -->
+      <text x="200" y="135" text-anchor="middle" font-family="serif" font-size="8" fill="rgba(201,169,110,0.7)" letter-spacing="3">AURVM</text>
+      <text x="200" y="148" text-anchor="middle" font-family="sans-serif" font-size="5" fill="rgba(201,169,110,0.4)" letter-spacing="2">GENÈVE</text>
+      <!-- Gradient defs -->
+      <defs>
+        <radialGradient id="caseGrad" cx="35%" cy="30%">
+          <stop offset="0%" stop-color="#3a3530"/>
+          <stop offset="60%" stop-color="#1a1710"/>
+          <stop offset="100%" stop-color="#0a0a08"/>
+        </radialGradient>
+        <radialGradient id="dialGrad" cx="40%" cy="35%">
+          <stop offset="0%" stop-color="#1e1c18"/>
+          <stop offset="100%" stop-color="#0c0b08"/>
+        </radialGradient>
+        <radialGradient id="skelGrad" cx="40%" cy="35%">
+          <stop offset="0%" stop-color="#161410"/>
+          <stop offset="100%" stop-color="#0a0906"/>
+        </radialGradient>
+      </defs>
+    </svg>
+  </div>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">Swiss haute horlogerie — Est. 1994</p>
+    <h1 class="hero-title">Time is<br/>an <em>Art</em><br/>Form</h1>
+    <p class="hero-subtitle">Ultra-light, ultra-complex. Where aerospace engineering meets the most elevated watchmaking traditions of Geneva.</p>
+    <div class="hero-ctas">
+      <a href="#collection" class="btn-primary"><span>Explore Collection</span></a>
+      <a href="#showcase" class="btn-outline">
+        Discover Timepieces
+        <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+  <div class="hero-side-text">Collection 2025 — Spring / Summer</div>
+</section>
+
+<!-- ======================== TICKER ======================== -->
+<div class="ticker-wrap" aria-hidden="true">
+  <div class="ticker-track" id="tickerTrack">
+    <div class="ticker-item"><span>✦</span> Haute Horlogerie</div>
+    <div class="ticker-item"><span>✦</span> Tourbillon Escapement</div>
+    <div class="ticker-item"><span>✦</span> Carbon TPT® Composite</div>
+    <div class="ticker-item"><span>✦</span> Swiss Made</div>
+    <div class="ticker-item"><span>✦</span> 70-Hour Power Reserve</div>
+    <div class="ticker-item"><span>✦</span> Limited Editions</div>
+    <div class="ticker-item"><span>✦</span> Formula 1 Heritage</div>
+    <div class="ticker-item"><span>✦</span> Haute Horlogerie</div>
+    <div class="ticker-item"><span>✦</span> Tourbillon Escapement</div>
+    <div class="ticker-item"><span>✦</span> Carbon TPT® Composite</div>
+    <div class="ticker-item"><span>✦</span> Swiss Made</div>
+    <div class="ticker-item"><span>✦</span> 70-Hour Power Reserve</div>
+    <div class="ticker-item"><span>✦</span> Limited Editions</div>
+    <div class="ticker-item"><span>✦</span> Formula 1 Heritage</div>
+  </div>
+</div>
+
+<!-- ======================== COLLECTION ======================== -->
+<section id="collection" class="section-pad" aria-labelledby="collection-heading">
+  <div class="collection-header">
+    <div>
+      <div class="section-label reveal">Featured Collections</div>
+      <h2 class="section-title reveal" id="collection-heading">Masterpieces of<br/><em>Complication</em></h2>
+    </div>
+    <a href="#" class="btn-outline reveal" style="transition-delay: 0.2s">
+      View All Collections
+      <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+    </a>
+  </div>
+
+  <div class="collection-grid">
+    <!-- Card 1 -->
+    <article class="watch-card reveal" style="transition-delay:0.1s" aria-label="RM 011-03 Felipe Massa">
+      <div class="watch-card-bg">
+        <div class="watch-svg-container">
+          <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+            <rect x="110" y="10" width="80" height="55" rx="6" fill="#111" stroke="#222" stroke-width="1"/>
+            <rect x="110" y="235" width="80" height="55" rx="6" fill="#111" stroke="#222" stroke-width="1"/>
+            <rect x="50" y="65" width="200" height="170" rx="25" fill="url(#g1)" stroke="#c9a96e" stroke-width="1.5"/>
+            <rect x="60" y="75" width="180" height="150" rx="20" fill="#0d0d0d"/>
+            <!-- skeleton bridges -->
+            <path d="M90 100 L210 100 L210 190 L90 190 Z" fill="none" stroke="rgba(201,169,110,0.15)" stroke-width="0.5"/>
+            <ellipse cx="130" cy="130" rx="30" ry="30" fill="#0a0a08" stroke="rgba(201,169,110,0.2)" stroke-width="0.5"/>
+            <ellipse cx="170" cy="155" rx="22" ry="22" fill="#0a0a08" stroke="rgba(201,169,110,0.2)" stroke-width="0.5"/>
+            <line x1="150" y1="130" x2="150" y2="98" stroke="#c9a96e" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="150" y1="130" x2="172" y2="118" stroke="#c9a96e" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="150" y1="130" x2="132" y2="168" stroke="#e05a2b" stroke-width="1" stroke-linecap="round"/>
+            <circle cx="150" cy="130" r="4" fill="#c9a96e"/>
+            <text x="150" y="118" text-anchor="middle" font-size="6" fill="rgba(201,169,110,0.6)" font-family="serif" letter-spacing="2">AURVM</text>
+            <defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2a2520"/><stop offset="100%" stop-color="#0a0906"/></linearGradient></defs>
+          </svg>
+        </div>
+      </div>
+      <div class="watch-card-inner">
+        <p class="watch-card-num">01 / 06</p>
+        <h3 class="watch-card-name">RM 011–03<br/>Flyback</h3>
+        <p class="watch-card-ref">Ref. AV-011-03-CA</p>
+      </div>
+      <div class="watch-card-hover">
+        <a href="#" class="watch-card-cta">View Details</a>
+      </div>
+    </article>
+
+    <!-- Card 2 -->
+    <article class="watch-card reveal" style="transition-delay:0.2s" aria-label="RM 035 Rafael Nadal">
+      <div class="watch-card-bg" style="background: #0d0e14;">
+        <div class="watch-svg-container">
+          <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+            <rect x="115" y="10" width="70" height="55" rx="6" fill="#0d0e14" stroke="#1a1b22" stroke-width="1"/>
+            <rect x="115" y="235" width="70" height="55" rx="6" fill="#0d0e14" stroke="#1a1b22" stroke-width="1"/>
+            <ellipse cx="150" cy="150" rx="100" ry="100" fill="url(#g2)" stroke="#8899cc" stroke-width="1.5"/>
+            <ellipse cx="150" cy="150" rx="88" ry="88" fill="#080810"/>
+            <circle cx="150" cy="150" r="70" fill="none" stroke="rgba(136,153,204,0.2)" stroke-width="0.5" stroke-dasharray="4 4"/>
+            <g stroke="rgba(136,153,204,0.5)" stroke-width="1.5">
+              <line x1="150" y1="80" x2="150" y2="90"/>
+              <line x1="150" y1="210" x2="150" y2="220"/>
+              <line x1="80" y1="150" x2="90" y2="150"/>
+              <line x1="210" y1="150" x2="220" y2="150"/>
+            </g>
+            <line x1="150" y1="150" x2="150" y2="98" stroke="#8899cc" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="150" y1="150" x2="185" y2="132" stroke="#aabbdd" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="150" y1="150" x2="128" y2="188" stroke="#e05a2b" stroke-width="1" stroke-linecap="round"/>
+            <circle cx="150" cy="150" r="4" fill="#8899cc"/>
+            <text x="150" y="138" text-anchor="middle" font-size="6" fill="rgba(136,153,204,0.6)" font-family="serif" letter-spacing="2">AURVM</text>
+            <defs><radialGradient id="g2" cx="35%" cy="30%"><stop offset="0%" stop-color="#1a1c28"/><stop offset="100%" stop-color="#0a0810"/></radialGradient></defs>
+          </svg>
+        </div>
+      </div>
+      <div class="watch-card-inner">
+        <p class="watch-card-num">02 / 06</p>
+        <h3 class="watch-card-name">RM 035–02<br/>Ultralight</h3>
+        <p class="watch-card-ref">Ref. AV-035-02-GR</p>
+      </div>
+      <div class="watch-card-hover">
+        <a href="#" class="watch-card-cta">View Details</a>
+      </div>
+    </article>
+
+    <!-- Card 3 -->
+    <article class="watch-card reveal" style="transition-delay:0.3s" aria-label="RM 056 Tourbillon">
+      <div class="watch-card-bg" style="background: #120a08;">
+        <div class="watch-svg-container">
+          <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+            <rect x="115" y="10" width="70" height="55" rx="6" fill="#120a08" stroke="#1f1008" stroke-width="1"/>
+            <rect x="115" y="235" width="70" height="55" rx="6" fill="#120a08" stroke="#1f1008" stroke-width="1"/>
+            <ellipse cx="150" cy="150" rx="100" ry="100" fill="url(#g3)" stroke="#c9a96e" stroke-width="2"/>
+            <ellipse cx="150" cy="150" rx="87" ry="87" fill="#0c0806"/>
+            <!-- Tourbillon cage -->
+            <circle cx="150" cy="160" r="28" fill="none" stroke="rgba(201,169,110,0.4)" stroke-width="1.5"/>
+            <circle cx="150" cy="160" r="20" fill="none" stroke="rgba(201,169,110,0.25)" stroke-width="0.8"/>
+            <circle cx="150" cy="160" r="10" fill="rgba(201,169,110,0.05)" stroke="rgba(201,169,110,0.4)" stroke-width="1"/>
+            <line x1="150" y1="132" x2="150" y2="188" stroke="rgba(201,169,110,0.3)" stroke-width="0.8"/>
+            <line x1="122" y1="160" x2="178" y2="160" stroke="rgba(201,169,110,0.3)" stroke-width="0.8"/>
+            <!-- Power reserve -->
+            <rect x="100" y="105" width="40" height="12" rx="4" fill="none" stroke="rgba(201,169,110,0.3)" stroke-width="0.8"/>
+            <rect x="102" y="107" width="25" height="8" rx="3" fill="rgba(201,169,110,0.3)"/>
+            <text x="120" y="100" text-anchor="middle" font-size="5.5" fill="rgba(201,169,110,0.5)" font-family="sans-serif" letter-spacing="1">POWER RES.</text>
+            <line x1="150" y1="150" x2="150" y2="100" stroke="#e8cc98" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="150" y1="150" x2="186" y2="130" stroke="#c9a96e" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="150" cy="150" r="5" fill="#c9a96e"/>
+            <text x="150" y="136" text-anchor="middle" font-size="6" fill="rgba(201,169,110,0.6)" font-family="serif" letter-spacing="2">AURVM</text>
+            <defs><radialGradient id="g3" cx="35%" cy="30%"><stop offset="0%" stop-color="#2a1a10"/><stop offset="100%" stop-color="#0a0604"/></radialGradient></defs>
+          </svg>
+        </div>
+      </div>
+      <div class="watch-card-inner">
+        <p class="watch-card-num">03 / 06</p>
+        <h3 class="watch-card-name">RM 056<br/>Tourbillon</h3>
+        <p class="watch-card-ref">Ref. AV-056-SA</p>
+      </div>
+      <div class="watch-card-hover">
+        <a href="#" class="watch-card-cta">View Details</a>
+      </div>
+    </article>
+
+    <!-- Card 4 -->
+    <article class="watch-card reveal" style="transition-delay:0.1s" aria-label="RM 67-02 Automatic">
+      <div class="watch-card-bg" style="background: #0a110d;">
+        <div class="watch-svg-container">
+          <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+            <rect x="115" y="10" width="70" height="55" rx="6" fill="#0a110d" stroke="#121a14" stroke-width="1"/>
+            <rect x="115" y="235" width="70" height="55" rx="6" fill="#0a110d" stroke="#121a14" stroke-width="1"/>
+            <ellipse cx="150" cy="150" rx="100" ry="100" fill="url(#g4)" stroke="#5a9a6e" stroke-width="1.5"/>
+            <ellipse cx="150" cy="150" rx="88" ry="88" fill="#060d08"/>
+            <ellipse cx="150" cy="150" rx="65" ry="65" fill="none" stroke="rgba(90,154,110,0.15)" stroke-width="0.5" stroke-dasharray="3 6"/>
+            <g stroke="rgba(90,154,110,0.5)" stroke-width="1.5">
+              <line x1="150" y1="85" x2="150" y2="97"/>
+              <line x1="150" y1="203" x2="150" y2="215"/>
+              <line x1="85" y1="150" x2="97" y2="150"/>
+              <line x1="203" y1="150" x2="215" y2="150"/>
+            </g>
+            <ellipse cx="150" cy="173" rx="18" ry="18" fill="none" stroke="rgba(90,154,110,0.3)" stroke-width="0.8"/>
+            <line x1="150" y1="150" x2="150" y2="96" stroke="#5a9a6e" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="150" y1="150" x2="180" y2="130" stroke="#7acc8e" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="150" y1="150" x2="130" y2="192" stroke="#e05a2b" stroke-width="1" stroke-linecap="round"/>
+            <circle cx="150" cy="150" r="4" fill="#5a9a6e"/>
+            <text x="150" y="137" text-anchor="middle" font-size="6" fill="rgba(90,154,110,0.6)" font-family="serif" letter-spacing="2">AURVM</text>
+            <defs><radialGradient id="g4" cx="35%" cy="30%"><stop offset="0%" stop-color="#0e1e14"/><stop offset="100%" stop-color="#050d07"/></radialGradient></defs>
+          </svg>
+        </div>
+      </div>
+      <div class="watch-card-inner">
+        <p class="watch-card-num">04 / 06</p>
+        <h3 class="watch-card-name">RM 67–02<br/>Automatic</h3>
+        <p class="watch-card-ref">Ref. AV-067-02-TP</p>
+      </div>
+      <div class="watch-card-hover">
+        <a href="#" class="watch-card-cta">View Details</a>
+      </div>
+    </article>
+
+    <!-- Card 5 -->
+    <article class="watch-card reveal" style="transition-delay:0.2s" aria-label="RM 052 Skull">
+      <div class="watch-card-bg" style="background: #0e0a14;">
+        <div class="watch-svg-container">
+          <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+            <rect x="115" y="10" width="70" height="55" rx="6" fill="#0e0a14" stroke="#181020" stroke-width="1"/>
+            <rect x="115" y="235" width="70" height="55" rx="6" fill="#0e0a14" stroke="#181020" stroke-width="1"/>
+            <ellipse cx="150" cy="150" rx="100" ry="100" fill="url(#g5)" stroke="#9966cc" stroke-width="1.5"/>
+            <ellipse cx="150" cy="150" rx="88" ry="88" fill="#080610"/>
+            <!-- Skull decorative motif simplified -->
+            <ellipse cx="150" cy="142" rx="30" ry="28" fill="none" stroke="rgba(153,102,204,0.3)" stroke-width="1"/>
+            <ellipse cx="138" cy="148" rx="8" ry="8" fill="rgba(153,102,204,0.1)" stroke="rgba(153,102,204,0.3)" stroke-width="0.8"/>
+            <ellipse cx="162" cy="148" rx="8" ry="8" fill="rgba(153,102,204,0.1)" stroke="rgba(153,102,204,0.3)" stroke-width="0.8"/>
+            <path d="M140 163 L145 167 L155 167 L160 163" fill="none" stroke="rgba(153,102,204,0.3)" stroke-width="0.8"/>
+            <line x1="150" y1="167" x2="150" y2="172" stroke="rgba(153,102,204,0.3)" stroke-width="0.8"/>
+            <g stroke="rgba(153,102,204,0.5)" stroke-width="1.5">
+              <line x1="150" y1="82" x2="150" y2="94"/>
+              <line x1="150" y1="206" x2="150" y2="218"/>
+              <line x1="82" y1="150" x2="94" y2="150"/>
+              <line x1="206" y1="150" x2="218" y2="150"/>
+            </g>
+            <line x1="150" y1="150" x2="150" y2="97" stroke="#9966cc" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="150" y1="150" x2="188" y2="132" stroke="#cc99ff" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="150" cy="150" r="4" fill="#9966cc"/>
+            <text x="150" y="96" text-anchor="middle" font-size="6" fill="rgba(153,102,204,0.6)" font-family="serif" letter-spacing="2">AURVM</text>
+            <defs><radialGradient id="g5" cx="35%" cy="30%"><stop offset="0%" stop-color="#1e1428"/><stop offset="100%" stop-color="#080610"/></radialGradient></defs>
+          </svg>
+        </div>
+      </div>
+      <div class="watch-card-inner">
+        <p class="watch-card-num">05 / 06</p>
+        <h3 class="watch-card-name">RM 052<br/>Vanitas</h3>
+        <p class="watch-card-ref">Ref. AV-052-TI</p>
+      </div>
+      <div class="watch-card-hover">
+        <a href="#" class="watch-card-cta">View Details</a>
+      </div>
+    </article>
+
+    <!-- Card 6 -->
+    <article class="watch-card reveal" style="transition-delay:0.3s" aria-label="RM 27 Tennis">
+      <div class="watch-card-bg" style="background: #110a08;">
+        <div class="watch-svg-container">
+          <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+            <rect x="115" y="10" width="70" height="55" rx="6" fill="#110a08" stroke="#1e1008" stroke-width="1"/>
+            <rect x="115" y="235" width="70" height="55" rx="6" fill="#110a08" stroke="#1e1008" stroke-width="1"/>
+            <rect x="55" y="70" width="190" height="160" rx="22" fill="url(#g6)" stroke="#cc6633" stroke-width="1.5"/>
+            <rect x="65" y="80" width="170" height="140" rx="18" fill="#0a0806"/>
+            <!-- Racing-style sub dials -->
+            <ellipse cx="120" cy="140" rx="25" ry="25" fill="none" stroke="rgba(204,102,51,0.3)" stroke-width="1"/>
+            <ellipse cx="180" cy="140" rx="25" ry="25" fill="none" stroke="rgba(204,102,51,0.3)" stroke-width="1"/>
+            <ellipse cx="150" cy="178" rx="18" ry="12" fill="none" stroke="rgba(204,102,51,0.3)" stroke-width="1"/>
+            <g stroke="rgba(204,102,51,0.5)" stroke-width="1.5">
+              <line x1="150" y1="90" x2="150" y2="102"/>
+              <line x1="150" y1="198" x2="150" y2="210"/>
+              <line x1="68" y1="150" x2="80" y2="150"/>
+              <line x1="220" y1="150" x2="232" y2="150"/>
+            </g>
+            <line x1="150" y1="150" x2="150" y2="101" stroke="#cc6633" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="150" y1="150" x2="182" y2="130" stroke="#ff8855" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="150" y1="150" x2="128" y2="192" stroke="#e05a2b" stroke-width="1" stroke-linecap="round"/>
+            <circle cx="150" cy="150" r="4" fill="#cc6633"/>
+            <text x="150" y="119" text-anchor="middle" font-size="6" fill="rgba(204,102,51,0.6)" font-family="serif" letter-spacing="2">AURVM</text>
+            <text x="150" y="128" text-anchor="middle" font-size="5" fill="rgba(204,102,51,0.4)" font-family="sans-serif" letter-spacing="2">CHRONOGRAPH</text>
+            <defs><radialGradient id="g6" cx="35%" cy="30%"><stop offset="0%" stop-color="#221610"/><stop offset="100%" stop-color="#0a0806"/></radialGradient></defs>
+          </svg>
+        </div>
+      </div>
+      <div class="watch-card-inner">
+        <p class="watch-card-num">06 / 06</p>
+        <h3 class="watch-card-name">RM 027<br/>Chrono Sport</h3>
+        <p class="watch-card-ref">Ref. AV-027-CA</p>
+      </div>
+      <div class="watch-card-hover">
+        <a href="#" class="watch-card-cta">View Details</a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ======================== BRAND STORY ======================== -->
+<section id="brand-story" aria-labelledby="story-heading">
+  <div class="story-image-side">
+    <div class="story-image-bg">
+      <div class="story-parallax-watch" id="storyWatch">
+        <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+          <!-- Large tourbillon illustration -->
+          <defs>
+            <radialGradient id="sg1" cx="35%" cy="30%">
+              <stop offset="0%" stop-color="#2a2018"/>
+              <stop offset="70%" stop-color="#0f0c08"/>
+              <stop offset="100%" stop-color="#050402"/>
+            </radialGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <rect x="150" y="5" width="100" height="90" rx="10" fill="#111" stroke="#1a1a1a" stroke-width="1"/>
+          <rect x="150" y="305" width="100" height="90" rx="10" fill="#111" stroke="#1a1a1a" stroke-width="1"/>
+          <ellipse cx="200" cy="200" rx="178" ry="178" fill="url(#sg1)" stroke="#c9a96e" stroke-width="2" filter="url(#glow)"/>
+          <ellipse cx="200" cy="200" rx="164" ry="164" fill="none" stroke="rgba(201,169,110,0.15)" stroke-width="0.5"/>
+          <ellipse cx="200" cy="200" rx="148" ry="148" fill="#080806"/>
+          <!-- Main tourbillon cage -->
+          <circle cx="200" cy="215" r="55" fill="none" stroke="rgba(201,169,110,0.5)" stroke-width="2"/>
+          <circle cx="200" cy="215" r="40" fill="none" stroke="rgba(201,169,110,0.3)" stroke-width="1.5"/>
+          <circle cx="200" cy="215" r="20" fill="rgba(201,169,110,0.03)" stroke="rgba(201,169,110,0.5)" stroke-width="1.5"/>
+          <line x1="200" y1="160" x2="200" y2="270" stroke="rgba(201,169,110,0.3)" stroke-width="1"/>
+          <line x1="145" y1="215" x2="255" y2="215" stroke="rgba(201,169,110,0.3)" stroke-width="1"/>
+          <!-- Bridge structures -->
+          <path d="M80 130 Q150 120 200 110 Q250 120 320 130" fill="none" stroke="rgba(201,169,110,0.2)" stroke-width="1.5"/>
+          <path d="M80 270 Q150 260 200 250" fill="none" stroke="rgba(201,169,110,0.15)" stroke-width="1"/>
+          <!-- Screws detail -->
+          <g fill="rgba(201,169,110,0.5)" filter="url(#glow)">
+            <circle cx="95" cy="140" r="4"/>
+            <circle cx="305" cy="140" r="4"/>
+            <circle cx="95" cy="260" r="4"/>
+            <circle cx="305" cy="260" r="4"/>
+            <circle cx="200" cy="105" r="4"/>
+          </g>
+          <!-- Hour markers -->
+          <g stroke="#c9a96e" stroke-width="2" filter="url(#glow)">
+            <line x1="200" y1="52" x2="200" y2="68"/>
+            <line x1="200" y1="332" x2="200" y2="348"/>
+            <line x1="52" y1="200" x2="68" y2="200"/>
+            <line x1="332" y1="200" x2="348" y2="200"/>
+          </g>
+          <!-- Hour hand -->
+          <line x1="200" y1="200" x2="200" y2="108" stroke="#e8cc98" stroke-width="4" stroke-linecap="round" filter="url(#glow)"/>
+          <!-- Minute hand -->
+          <line x1="200" y1="200" x2="272" y2="155" stroke="#c9a96e" stroke-width="3" stroke-linecap="round"/>
+          <!-- Crown -->
+          <rect x="365" y="190" width="22" height="20" rx="5" fill="#222" stroke="#c9a96e" stroke-width="1"/>
+          <!-- Center -->
+          <circle cx="200" cy="200" r="7" fill="#c9a96e" filter="url(#glow)"/>
+          <circle cx="200" cy="200" r="3.5" fill="#fff8e8"/>
+          <!-- Brand label -->
+          <text x="200" y="152" text-anchor="middle" font-family="serif" font-size="10" fill="rgba(201,169,110,0.8)" letter-spacing="4">AURVM</text>
+          <text x="200" y="166" text-anchor="middle" font-family="sans-serif" font-size="6" fill="rgba(201,169,110,0.4)" letter-spacing="3">GENÈVE — SUISSE</text>
+        </svg>
+      </div>
+    </div>
+    <div class="story-overlay-text">1994</div>
+  </div>
+
+  <div class="story-content">
+    <div class="section-label reveal-left">Our Maison</div>
+    <h2 class="section-title reveal-left" id="story-heading">Born from<br/><em>Obsession</em></h2>
+    <p class="story-body reveal-left" style="transition-delay:0.15s">
+      Founded in Geneva in 1994, AURVM was born from a single obsession: to push the boundaries of what is technically and aesthetically possible in watchmaking. Every component — from the nano-machined carbon composite cases to the hand-finished tourbillon cages — is engineered with the same philosophy that drives championship racing teams.
+      <br/><br/>
+      Each timepiece takes between 6 and 18 months to complete. We produce fewer than 850 watches per year. Not by limitation — by choice.
+    </p>
+    <a href="#" class="btn-outline reveal-left" style="transition-delay:0.25s">
+      Our Story
+      <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+    </a>
+    <div class="stats-grid">
+      <div class="stat-item reveal" style="transition-delay:0.1s">
+        <span class="stat-number" data-target="30">0</span>
+        <span class="stat-label">Years of Innovation</span>
+      </div>
+      <div class="stat-item reveal" style="transition-delay:0.2s">
+        <span class="stat-number" data-target="850">0</span>
+        <span class="stat-label">Watches per Year</span>
+      </div>
+      <div class="stat-item reveal" style="transition-delay:0.3s">
+        <span class="stat-number" data-target="44">0</span>
+        <span class="stat-label">Countries</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== PARTNERS ======================== -->
+<section id="partners" class="section-pad" aria-labelledby="partners-heading">
+  <div class="partners-header">
+    <div class="section-label reveal" style="justify-content:center">Ambassadors</div>
+    <h2 class="section-title partners-section-title reveal" id="partners-heading">Icons of <em>Excellence</em></h2>
+    <p style="font-size:0.9rem; font-weight:300; color:var(--text-muted); max-width:480px; margin:1rem auto 0; line-height:1.8;" class="reveal">Aligned with those who refuse to accept limits. Our ambassadors redefine performance in their fields.</p>
+  </div>
+
+  <div class="ambassadors-grid">
+    <article class="ambassador-card reveal" style="transition-delay:0.1s" aria-label="Formula 1 Driver">
+      <div class="ambassador-bg">
+        <img src="assets/ambassador-1.jpg" alt="Formula 1 Driver" style="width:100%;height:100%;object-fit:cover;display:block;">
+      </div>
+      <div class="ambassador-overlay"></div>
+      <div class="ambassador-info">
+        <p class="ambassador-sport">Formula 1</p>
+        <h3 class="ambassador-name">Marc Delavoie</h3>
+        <p class="ambassador-desc">3× World Champion · 94 Grand Prix Wins</p>
+      </div>
+    </article>
+
+    <article class="ambassador-card reveal" style="transition-delay:0.2s" aria-label="Tennis Player">
+      <div class="ambassador-bg" style="background: linear-gradient(180deg, #0a1505 0%, #0a0a0a 100%);">
+        <img src="assets/ambassador-2.jpg" alt="Tennis Player" style="width:100%;height:100%;object-fit:cover;display:block;">
+      </div>
+      <div class="ambassador-overlay"></div>
+      <div class="ambassador-info">
+        <p class="ambassador-sport">Tennis</p>
+        <h3 class="ambassador-name">Sofia Armand</h3>
+        <p class="ambassador-desc">Grand Slam Champion · World No. 1</p>
+      </div>
+    </article>
+
+    <article class="ambassador-card reveal" style="transition-delay:0.3s" aria-label="Golf Champion">
+      <div class="ambassador-bg" style="background: linear-gradient(180deg, #08100a 0%, #0a0a0a 100%);">
+        <img src="assets/ambassador-3.jpg" alt="Golf Champion" style="width:100%;height:100%;object-fit:cover;display:block;">
+      </div>
+      <div class="ambassador-overlay"></div>
+      <div class="ambassador-info">
+        <p class="ambassador-sport">Golf</p>
+        <h3 class="ambassador-name">Kenji Watanabe</h3>
+        <p class="ambassador-desc">Masters Champion · 18 PGA Tour Wins</p>
+      </div>
+    </article>
+
+    <article class="ambassador-card reveal" style="transition-delay:0.4s" aria-label="Free Solo Climber">
+      <div class="ambassador-bg" style="background: linear-gradient(180deg, #100a14 0%, #0a0a0a 100%);">
+        <img src="assets/ambassador-4.jpg" alt="Free Solo Climber" style="width:100%;height:100%;object-fit:cover;display:block;">
+      </div>
+      <div class="ambassador-overlay"></div>
+      <div class="ambassador-info">
+        <p class="ambassador-sport">Free Solo Climbing</p>
+        <h3 class="ambassador-name">Lena Frost</h3>
+        <p class="ambassador-desc">First free solo ascent of El Capitan</p>
+      </div>
+    </article>
+  </div>
+
+  <div class="brand-partners-row reveal">
+    <span class="partner-logo">Formula One Group</span>
+    <span class="partner-logo">ATP Tour</span>
+    <span class="partner-logo">PGA Tour</span>
+    <span class="partner-logo">World Athletics</span>
+    <span class="partner-logo">Oceanic Foundation</span>
+    <span class="partner-logo">Red Bull Racing</span>
+  </div>
+</section>
+
+<!-- ======================== SHOWCASE SLIDER ======================== -->
+<section id="showcase" aria-labelledby="showcase-heading">
+  <div class="showcase-inner">
+    <div class="showcase-slider">
+      <div class="slider-track" id="sliderTrack">
+
+        <!-- Slide 1 -->
+        <div class="slide">
+          <svg viewBox="0 0 350 350" xmlns="http://www.w3.org/2000/svg">
+            <defs><radialGradient id="sl1a" cx="35%" cy="30%"><stop offset="0%" stop-color="#2a2018"/><stop offset="100%" stop-color="#080604"/></radialGradient></defs>
+            <rect x="130" y="5" width="90" height="75" rx="8" fill="#0f0e0c" stroke="#1a1a16" stroke-width="1"/>
+            <rect x="130" y="270" width="90" height="75" rx="8" fill="#0f0e0c" stroke="#1a1a16" stroke-width="1"/>
+            <ellipse cx="175" cy="175" rx="155" ry="155" fill="url(#sl1a)" stroke="#c9a96e" stroke-width="2"/>
+            <ellipse cx="175" cy="175" rx="140" ry="140" fill="none" stroke="rgba(201,169,110,0.2)" stroke-width="0.5"/>
+            <ellipse cx="175" cy="175" rx="125" ry="125" fill="#060504"/>
+            <!-- Main skeleton bridges -->
+            <path d="M80 120 L160 100 L190 100 L270 120" fill="none" stroke="rgba(201,169,110,0.25)" stroke-width="1.5"/>
+            <path d="M80 230 L160 250 L190 250 L270 230" fill="none" stroke="rgba(201,169,110,0.2)" stroke-width="1.5"/>
+            <!-- Sub-dials -->
+            <circle cx="128" cy="175" r="32" fill="none" stroke="rgba(201,169,110,0.3)" stroke-width="1"/>
+            <circle cx="128" cy="175" r="24" fill="none" stroke="rgba(201,169,110,0.15)" stroke-width="0.5" stroke-dasharray="3 4"/>
+            <circle cx="222" cy="175" r="32" fill="none" stroke="rgba(201,169,110,0.3)" stroke-width="1"/>
+            <circle cx="222" cy="175" r="24" fill="none" stroke="rgba(201,169,110,0.15)" stroke-width="0.5" stroke-dasharray="3 4"/>
+            <!-- Sub hands -->
+            <line x1="128" y1="175" x2="128" y2="152" stroke="#c9a96e" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="222" y1="175" x2="238" y2="162" stroke="#c9a96e" stroke-width="1.5" stroke-linecap="round"/>
+            <!-- Main hands -->
+            <g stroke="#e8cc98" stroke-width="3.5" stroke-linecap="round">
+              <line x1="175" y1="175" x2="175" y2="90"/>
+            </g>
+            <line x1="175" y1="175" x2="228" y2="140" stroke="#c9a96e" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="175" y1="175" x2="148" y2="228" stroke="#e05a2b" stroke-width="1.2" stroke-linecap="round"/>
+            <circle cx="175" cy="175" r="6" fill="#c9a96e"/>
+            <circle cx="175" cy="175" r="3" fill="#e8cc98"/>
+            <!-- Hour markers -->
+            <g stroke="#c9a96e" stroke-width="2">
+              <line x1="175" y1="50" x2="175" y2="65"/>
+              <line x1="175" y1="285" x2="175" y2="300"/>
+              <line x1="50" y1="175" x2="65" y2="175"/>
+              <line x1="285" y1="175" x2="300" y2="175"/>
+            </g>
+            <!-- Crown -->
+            <rect x="318" y="167" width="18" height="16" rx="4" fill="#1a1a16" stroke="#c9a96e" stroke-width="0.8"/>
+            <!-- Text -->
+            <text x="175" y="145" text-anchor="middle" font-family="serif" font-size="9" fill="rgba(201,169,110,0.7)" letter-spacing="4">AURVM</text>
+            <text x="175" y="157" text-anchor="middle" font-family="sans-serif" font-size="5.5" fill="rgba(201,169,110,0.35)" letter-spacing="2">FLYBACK CHRONOGRAPH</text>
+          </svg>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="slide" style="background:#0a0810;">
+          <svg viewBox="0 0 350 350" xmlns="http://www.w3.org/2000/svg">
+            <defs><radialGradient id="sl2a" cx="35%" cy="30%"><stop offset="0%" stop-color="#1a1425"/><stop offset="100%" stop-color="#06050e"/></radialGradient></defs>
+            <rect x="130" y="5" width="90" height="75" rx="8" fill="#0a0810" stroke="#12101a" stroke-width="1"/>
+            <rect x="130" y="270" width="90" height="75" rx="8" fill="#0a0810" stroke="#12101a" stroke-width="1"/>
+            <ellipse cx="175" cy="175" rx="155" ry="155" fill="url(#sl2a)" stroke="#9966cc" stroke-width="2"/>
+            <ellipse cx="175" cy="175" rx="125" ry="125" fill="#040310"/>
+            <!-- Tourbillon -->
+            <circle cx="175" cy="195" r="48" fill="none" stroke="rgba(153,102,204,0.4)" stroke-width="1.5"/>
+            <circle cx="175" cy="195" r="36" fill="none" stroke="rgba(153,102,204,0.25)" stroke-width="1"/>
+            <circle cx="175" cy="195" r="18" fill="rgba(153,102,204,0.03)" stroke="rgba(153,102,204,0.4)" stroke-width="1.5"/>
+            <line x1="175" y1="147" x2="175" y2="243" stroke="rgba(153,102,204,0.3)" stroke-width="0.8"/>
+            <line x1="127" y1="195" x2="223" y2="195" stroke="rgba(153,102,204,0.3)" stroke-width="0.8"/>
+            <g stroke="rgba(153,102,204,0.5)" stroke-width="2">
+              <line x1="175" y1="50" x2="175" y2="68"/>
+              <line x1="175" y1="282" x2="175" y2="300"/>
+              <line x1="50" y1="175" x2="68" y2="175"/>
+              <line x1="282" y1="175" x2="300" y2="175"/>
+            </g>
+            <line x1="175" y1="175" x2="175" y2="88" stroke="#cc99ff" stroke-width="3.5" stroke-linecap="round"/>
+            <line x1="175" y1="175" x2="235" y2="142" stroke="#9966cc" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="175" y1="175" x2="148" y2="225" stroke="#e05a2b" stroke-width="1.2" stroke-linecap="round"/>
+            <circle cx="175" cy="175" r="6" fill="#9966cc"/>
+            <circle cx="175" cy="175" r="3" fill="#cc99ff"/>
+            <text x="175" y="148" text-anchor="middle" font-family="serif" font-size="9" fill="rgba(153,102,204,0.8)" letter-spacing="4">AURVM</text>
+            <text x="175" y="160" text-anchor="middle" font-family="sans-serif" font-size="5.5" fill="rgba(153,102,204,0.35)" letter-spacing="2">TOURBILLON VANITAS</text>
+            <rect x="318" y="167" width="18" height="16" rx="4" fill="#0e0c18" stroke="#9966cc" stroke-width="0.8"/>
+          </svg>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="slide" style="background:#060c08;">
+          <svg viewBox="0 0 350 350" xmlns="http://www.w3.org/2000/svg">
+            <defs><radialGradient id="sl3a" cx="35%" cy="30%"><stop offset="0%" stop-color="#0e2016"/><stop offset="100%" stop-color="#040a06"/></radialGradient></defs>
+            <rect x="130" y="5" width="90" height="75" rx="8" fill="#060c08" stroke="#0e1410" stroke-width="1"/>
+            <rect x="130" y="270" width="90" height="75" rx="8" fill="#060c08" stroke="#0e1410" stroke-width="1"/>
+            <ellipse cx="175" cy="175" rx="155" ry="155" fill="url(#sl3a)" stroke="#5a9a6e" stroke-width="2"/>
+            <ellipse cx="175" cy="175" rx="125" ry="125" fill="#030806"/>
+            <circle cx="175" cy="175" r="100" fill="none" stroke="rgba(90,154,110,0.08)" stroke-width="0.5" stroke-dasharray="4 8"/>
+            <g stroke="rgba(90,154,110,0.5)" stroke-width="2">
+              <line x1="175" y1="50" x2="175" y2="68"/>
+              <line x1="175" y1="282" x2="175" y2="300"/>
+              <line x1="50" y1="175" x2="68" y2="175"/>
+              <line x1="282" y1="175" x2="300" y2="175"/>
+            </g>
+            <g stroke="rgba(90,154,110,0.3)" stroke-width="1">
+              <line x1="228" y1="63" x2="220" y2="78"/>
+              <line x1="287" y1="122" x2="272" y2="130"/>
+              <line x1="287" y1="228" x2="272" y2="220"/>
+              <line x1="228" y1="287" x2="220" y2="272"/>
+              <line x1="122" y1="287" x2="130" y2="272"/>
+              <line x1="63" y1="228" x2="78" y2="220"/>
+              <line x1="63" y1="122" x2="78" y2="130"/>
+              <line x1="122" y1="63" x2="130" y2="78"/>
+            </g>
+            <circle cx="175" cy="215" r="28" fill="none" stroke="rgba(90,154,110,0.35)" stroke-width="1"/>
+            <line x1="175" y1="175" x2="175" y2="88" stroke="#7acc8e" stroke-width="3.5" stroke-linecap="round"/>
+            <line x1="175" y1="175" x2="232" y2="140" stroke="#5a9a6e" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="175" y1="175" x2="148" y2="225" stroke="#e05a2b" stroke-width="1.2" stroke-linecap="round"/>
+            <circle cx="175" cy="175" r="6" fill="#5a9a6e"/>
+            <circle cx="175" cy="175" r="3" fill="#7acc8e"/>
+            <text x="175" y="148" text-anchor="middle" font-family="serif" font-size="9" fill="rgba(90,154,110,0.7)" letter-spacing="4">AURVM</text>
+            <text x="175" y="160" text-anchor="middle" font-family="sans-serif" font-size="5.5" fill="rgba(90,154,110,0.35)" letter-spacing="2">AUTOMATIC ULTRALIGHT</text>
+            <rect x="318" y="167" width="18" height="16" rx="4" fill="#080e0a" stroke="#5a9a6e" stroke-width="0.8"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="showcase-info">
+      <p class="showcase-ref" id="showcaseRef">Reference AV-011-03-CA</p>
+      <h2 class="showcase-title" id="showcaseTitle" id="showcase-heading">RM 011–03<br/>Flyback Chronograph</h2>
+      <p class="showcase-desc" id="showcaseDesc">A masterpiece of mechanical complication, the RM 011-03 combines a flyback chronograph with annual calendar and hours and minutes functions in a barely-there 40g titanium and Carbon TPT® case.</p>
+      <div class="showcase-specs" id="showcaseSpecs">
+        <div class="spec-item">
+          <span class="spec-label">Case Material</span>
+          <span class="spec-value">Carbon TPT® / Ti</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">Dimensions</span>
+          <span class="spec-value">50mm × 40mm</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">Movement</span>
+          <span class="spec-value">Cal. AV-3 Manual</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">Power Reserve</span>
+          <span class="spec-value">55 Hours</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">Water Resistance</span>
+          <span class="spec-value">50 Metres</span>
+        </div>
+        <div class="spec-item">
+          <span class="spec-label">Limited Edition</span>
+          <span class="spec-value">150 Pieces</span>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; flex-wrap:wrap; gap:1.5rem;">
+        <div class="slider-controls">
+          <button class="slider-btn" id="sliderPrev" aria-label="Previous watch">
+            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
+          <button class="slider-btn" id="sliderNext" aria-label="Next watch">
+            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+        </div>
+        <div class="slider-dots">
+          <div class="slider-dot active" data-index="0"></div>
+          <div class="slider-dot" data-index="1"></div>
+          <div class="slider-dot" data-index="2"></div>
+        </div>
+        <a href="#" class="btn-outline" style="margin-left:auto">
+          Enquire
+          <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== NEWS ======================== -->
+<section id="news" class="section-pad" aria-labelledby="news-heading">
+  <div class="news-header">
+    <div>
+      <div class="section-label reveal">Latest News</div>
+      <h2 class="section-title reveal" id="news-heading">From the <em>Maison</em></h2>
+    </div>
+    <a href="#" class="btn-outline reveal">
+      All Articles
+      <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+    </a>
+  </div>
+
+  <div class="news-grid">
+    <article class="news-card featured reveal" style="transition-delay:0.1s" aria-label="SIHH 2025 launch article">
+      <div class="news-card-image">
+        <div class="news-card-image-inner">
+          <img src="assets/news-1.jpg" alt="SIHH 2025 Launch" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+      </div>
+      <div class="news-card-body">
+        <p class="news-cat">Press Release</p>
+        <h3 class="news-title">AURVM Unveils the RM 011-03 at Watches & Wonders Geneva 2025</h3>
+        <p class="news-excerpt">The most technically ambitious flyback chronograph we have ever produced, now with an annual calendar and entirely reimagined Carbon TPT® case geometry.</p>
+        <p class="news-date">April 7, 2025</p>
+      </div>
+    </article>
+
+    <article class="news-card reveal" style="transition-delay:0.2s" aria-label="Ambassador article">
+      <div class="news-card-image">
+        <div class="news-card-image-inner">
+          <img src="assets/news-2.jpg" alt="Sofia Armand Tennis" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+      </div>
+      <div class="news-card-body">
+        <p class="news-cat">Ambassadors</p>
+        <h3 class="news-title">Sofia Armand Wins Roland Garros Wearing the RM 035-02</h3>
+        <p class="news-date">June 9, 2025</p>
+      </div>
+    </article>
+
+    <article class="news-card reveal" style="transition-delay:0.3s" aria-label="Heritage article">
+      <div class="news-card-image">
+        <div class="news-card-image-inner">
+          <img src="assets/news-3.jpg" alt="Heritage Watchmaking" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+      </div>
+      <div class="news-card-body">
+        <p class="news-cat">Heritage</p>
+        <h3 class="news-title">Thirty Years of AURVM: A Retrospective of the Movements that Changed Everything</h3>
+        <p class="news-date">March 1, 2025</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ======================== FOOTER ======================== -->
+<footer id="footer" role="contentinfo">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <span class="footer-logo">AURVM</span>
+      <p class="footer-tagline">Haute horlogerie taken beyond its limits. Every watch a declaration of what is possible when engineering meets artistry.</p>
+      <div class="social-links">
+        <a href="#" class="social-link" aria-label="Instagram">
+          <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+        </a>
+        <a href="#" class="social-link" aria-label="Facebook">
+          <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+        </a>
+        <a href="#" class="social-link" aria-label="YouTube">
+          <svg viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"></path><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"></polygon></svg>
+        </a>
+        <a href="#" class="social-link" aria-label="X/Twitter">
+          <svg viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="footer-col-title">Collections</h3>
+      <ul class="footer-links">
+        <li><a href="#">Tourbillon</a></li>
+        <li><a href="#">Flyback Chronograph</a></li>
+        <li><a href="#">Split Seconds</a></li>
+        <li><a href="#">Ladies Collection</a></li>
+        <li><a href="#">Limited Editions</a></li>
+        <li><a href="#">New Releases</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h3 class="footer-col-title">Company</h3>
+      <ul class="footer-links">
+        <li><a href="#">Our Maison</a></li>
+        <li><a href="#">Manufacture</a></li>
+        <li><a href="#">Ambassadors</a></li>
+        <li><a href="#">News & Events</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h3 class="footer-col-title">Newsletter</h3>
+      <p style="font-size:0.85rem; font-weight:300; color:var(--text-muted); line-height:1.7; margin-bottom:1.25rem;">Be the first to know about new references, events, and invitations.</p>
+      <div class="newsletter-form" role="form" aria-label="Newsletter subscription">
+        <input type="email" class="newsletter-input" placeholder="Your email address" aria-label="Email address"/>
+        <button class="newsletter-btn" aria-label="Subscribe">Subscribe</button>
+      </div>
+      <p style="font-size:0.65rem; color:var(--gray-2); margin-top:0.75rem; letter-spacing:0.05em; font-family:var(--font-ui);">By subscribing you agree to our Privacy Policy.</p>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 AURVM SA. All rights reserved. Geneva, Switzerland.</p>
+    <div class="footer-legal">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+      <a href="#">Cookie Settings</a>
+      <a href="#">Sitemap</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ======================== JAVASCRIPT ======================== -->
+<script>
+  // ── LOADER ──────────────────────────────────
+  const loader = document.getElementById('loader');
+  const loaderPercent = document.getElementById('loaderPercent');
+  let count = 0;
+  const interval = setInterval(() => {
+    count += Math.floor(Math.random() * 18) + 5;
+    if (count >= 100) {
+      count = 100;
+      clearInterval(interval);
+      loaderPercent.textContent = 'Loading — 100%';
+      setTimeout(() => loader.classList.add('loaded'), 400);
+    } else {
+      loaderPercent.textContent = `Loading — ${count}%`;
+    }
+  }, 120);
+
+  // ── CUSTOM CURSOR ────────────────────────────
+  const dot = document.getElementById('cursorDot');
+  const ring = document.getElementById('cursorRing');
+  let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX; mouseY = e.clientY;
+    dot.style.left = mouseX + 'px';
+    dot.style.top = mouseY + 'px';
+  });
+  function animateRing() {
+    ringX += (mouseX - ringX) * 0.12;
+    ringY += (mouseY - ringY) * 0.12;
+    ring.style.left = ringX + 'px';
+    ring.style.top = ringY + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+  const hoverTargets = document.querySelectorAll('a, button, .watch-card, .news-card, .ambassador-card');
+  hoverTargets.forEach(el => {
+    el.addEventListener('mouseenter', () => { dot.classList.add('hover'); ring.classList.add('hover'); });
+    el.addEventListener('mouseleave', () => { dot.classList.remove('hover'); ring.classList.remove('hover'); });
+  });
+
+  // ── HEADER SCROLL ───────────────────────────
+  const header = document.getElementById('header');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 60);
+    document.getElementById('backTop').classList.toggle('visible', window.scrollY > 400);
+  });
+
+  // ── HAMBURGER / MOBILE MENU ─────────────────
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', () => {
+    const isOpen = hamburger.classList.toggle('open');
+    mobileMenu.classList.toggle('open', isOpen);
+    hamburger.setAttribute('aria-expanded', isOpen);
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  });
+  document.querySelectorAll('.mobile-link').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', false);
+      document.body.style.overflow = '';
+    });
+  });
+
+  // ── BACK TO TOP ─────────────────────────────
+  document.getElementById('backTop').addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ── THEME TOGGLE ─────────────────────────────
+  const themeBtn = document.getElementById('themeToggle');
+  themeBtn.addEventListener('click', () => {
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    themeBtn.textContent = isDark ? 'Dark' : 'Light';
+  });
+
+  // ── SCROLL REVEAL ────────────────────────────
+  const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        const delay = entry.target.style.transitionDelay || '0s';
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach(el => revealObserver.observe(el));
+
+  // ── COUNTER ANIMATION ───────────────────────
+  function animateCounter(el, target, duration) {
+    let start = 0;
+    const step = Math.ceil(target / (duration / 16));
+    const timer = setInterval(() => {
+      start += step;
+      if (start >= target) { start = target; clearInterval(timer); }
+      el.textContent = start.toLocaleString();
+    }, 16);
+  }
+  const statObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const nums = entry.target.querySelectorAll('[data-target]');
+        nums.forEach(num => {
+          const t = parseInt(num.dataset.target);
+          animateCounter(num, t, 1800);
+        });
+        statObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  const statsGrid = document.querySelector('.stats-grid');
+  if (statsGrid) statObserver.observe(statsGrid);
+
+  // ── PARALLAX HERO WATCH ─────────────────────
+  const heroWatch = document.getElementById('heroWatch');
+  window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    if (heroWatch && scrollY < window.innerHeight) {
+      heroWatch.style.transform = `translateY(calc(-50% + ${scrollY * 0.15}px))`;
+    }
+  });
+
+  // ── STORY PARALLAX ──────────────────────────
+  const storyWatch = document.getElementById('storyWatch');
+  if (storyWatch) {
+    window.addEventListener('scroll', () => {
+      const rect = storyWatch.closest('.story-image-side').getBoundingClientRect();
+      const center = window.innerHeight / 2;
+      const diff = (rect.top + rect.height / 2 - center) * 0.06;
+      storyWatch.style.transform = `translateY(${diff}px)`;
+    });
+  }
+
+  // ── SHOWCASE SLIDER ─────────────────────────
+  const slides = [
+    {
+      ref: 'Reference AV-011-03-CA',
+      title: 'RM 011–03\nFlyback Chronograph',
+      desc: 'A masterpiece of mechanical complication, the RM 011-03 combines a flyback chronograph with annual calendar and hours and minutes functions in a barely-there 40g titanium and Carbon TPT® case.',
+      specs: [
+        { label: 'Case Material', value: 'Carbon TPT® / Ti' },
+        { label: 'Dimensions', value: '50mm × 40mm' },
+        { label: 'Movement', value: 'Cal. AV-3 Manual' },
+        { label: 'Power Reserve', value: '55 Hours' },
+        { label: 'Water Resistance', value: '50 Metres' },
+        { label: 'Limited Edition', value: '150 Pieces' }
+      ]
+    },
+    {
+      ref: 'Reference AV-052-TI',
+      title: 'RM 052\nTourbillon Vanitas',
+      desc: 'Crafted from grade 5 titanium, the RM 052 features a hand-engraved tourbillon movement with a 70-hour power reserve. An artistic manifesto in mechanical form.',
+      specs: [
+        { label: 'Case Material', value: 'Grade 5 Titanium' },
+        { label: 'Dimensions', value: '45mm × 38mm' },
+        { label: 'Movement', value: 'Cal. AV-7 Tourbillon' },
+        { label: 'Power Reserve', value: '70 Hours' },
+        { label: 'Water Resistance', value: '30 Metres' },
+        { label: 'Limited Edition', value: '30 Pieces' }
+      ]
+    },
+    {
+      ref: 'Reference AV-067-02-TP',
+      title: 'RM 067–02\nAutomatic Ultralight',
+      desc: 'At just 32g on the wrist, the RM 067-02 pushes the boundaries of watchmaking lightness. The skeletonized movement is housed in a NTPT® Carbon composite case.',
+      specs: [
+        { label: 'Case Material', value: 'NTPT® Carbon' },
+        { label: 'Dimensions', value: '47mm × 38mm' },
+        { label: 'Movement', value: 'Cal. AV-11 Auto' },
+        { label: 'Power Reserve', value: '50 Hours' },
+        { label: 'Water Resistance', value: '50 Metres' },
+        { label: 'Weight', value: '32 Grams' }
+      ]
+    }
+  ];
+  let currentSlide = 0;
+  const track = document.getElementById('sliderTrack');
+  const dots = document.querySelectorAll('.slider-dot');
+
+  function goToSlide(n) {
+    currentSlide = (n + slides.length) % slides.length;
+    track.style.transform = `translateX(-${currentSlide * 100}%)`;
+    dots.forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+    const s = slides[currentSlide];
+    document.getElementById('showcaseRef').textContent = s.ref;
+    const titleEl = document.getElementById('showcaseTitle');
+    titleEl.innerHTML = s.title.replace('\n', '<br/>');
+    document.getElementById('showcaseDesc').textContent = s.desc;
+    const specsEl = document.getElementById('showcaseSpecs');
+    specsEl.innerHTML = s.specs.map(sp =>
+      `<div class="spec-item"><span class="spec-label">${sp.label}</span><span class="spec-value">${sp.value}</span></div>`
+    ).join('');
+  }
+  document.getElementById('sliderNext').addEventListener('click', () => goToSlide(currentSlide + 1));
+  document.getElementById('sliderPrev').addEventListener('click', () => goToSlide(currentSlide - 1));
+  dots.forEach(dot => dot.addEventListener('click', () => goToSlide(parseInt(dot.dataset.index))));
+
+  // Auto slide
+  setInterval(() => goToSlide(currentSlide + 1), 6000);
+
+  // Touch swipe
+  let touchStartX = 0;
+  track.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  track.addEventListener('touchend', e => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) goToSlide(currentSlide + (diff > 0 ? 1 : -1));
+  });
+
+  // ── SMOOTH SCROLL ────────────────────────────
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const href = a.getAttribute('href');
+      if (href === '#') return;
+      const target = document.querySelector(href);
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  // ── LAZY LOAD IMAGES ─────────────────────────
+  if ('loading' in HTMLImageElement.prototype) {
+    document.querySelectorAll('img[loading="lazy"]').forEach(img => img.setAttribute('loading', 'lazy'));
+  }
+
+  // ── NEWSLETTER FORM ──────────────────────────
+  const newsletterBtn = document.querySelector('.newsletter-btn');
+  if (newsletterBtn) {
+    newsletterBtn.addEventListener('click', () => {
+      const input = document.querySelector('.newsletter-input');
+      if (input && input.value.includes('@')) {
+        newsletterBtn.textContent = '✓ Done';
+        newsletterBtn.style.background = '#5a9a6e';
+        input.value = '';
+        setTimeout(() => { newsletterBtn.textContent = 'Subscribe'; newsletterBtn.style.background = ''; }, 2500);
+      }
+    });
+  }
+</script>
+</body>
+</html>
